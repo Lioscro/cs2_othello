@@ -1,15 +1,23 @@
 #include "board.hpp"
+#include <iostream>
 
 /*
  * Make a standard 8x8 othello board and initialize it to the standard setup.
  */
 Board::Board() {
-    taken.set(3 + 8 * 3);
-    taken.set(3 + 8 * 4);
-    taken.set(4 + 8 * 3);
-    taken.set(4 + 8 * 4);
-    black.set(4 + 8 * 3);
-    black.set(3 + 8 * 4);
+    // Occupy counts.
+    // No pieces have been added yet, so there are 64 empty spaces.
+    counts[EMPTY] = 64;
+    counts[WHITE] = 0;
+    counts[BLACK] = 0;
+
+    // Set whites at (3,3) and (4,4)
+    set(WHITE, 3, 3);
+    set(WHITE, 4, 4);
+
+    // Set blacks at (3,4) and (4,3)
+    set(BLACK, 3, 4);
+    set(BLACK, 4, 3);
 }
 
 /*
@@ -23,22 +31,37 @@ Board::~Board() {
  */
 Board *Board::copy() {
     Board *newBoard = new Board();
-    newBoard->black = black;
-    newBoard->taken = taken;
+    std::copy(&board[0][0], &board[0][0] + 8 * 8, &newBoard->board[0][0]);
+    std::copy(begin(counts), end(counts), begin(newBoard->counts));
     return newBoard;
 }
 
 bool Board::occupied(int x, int y) {
-    return taken[x + 8*y];
+    return board[y][x] != EMPTY;
 }
 
-bool Board::get(Side side, int x, int y) {
-    return occupied(x, y) && (black[x + 8*y] == (side == BLACK));
+int Board::get(int x, int y) {
+    return board[y][x];
 }
 
 void Board::set(Side side, int x, int y) {
-    taken.set(x + 8*y);
-    black.set(x + 8*y, side == BLACK);
+    Side other = (side == BLACK) ? WHITE : BLACK;
+
+    // First, update the counts.
+    counts[side]++;
+
+    if (get(x, y) == other)
+    {
+        counts[other]--;
+    }
+    else
+    {
+        counts[EMPTY]--;
+    }
+
+    // Then place the piece.
+    board[y][x] = side;
+
 }
 
 bool Board::onBoard(int x, int y) {
@@ -88,17 +111,68 @@ bool Board::checkMove(Move *m, Side side) {
             // Is there a capture in that direction?
             int x = X + dx;
             int y = Y + dy;
-            if (onBoard(x, y) && get(other, x, y)) {
+            if (onBoard(x, y) && (get(x, y) == other)) {
                 do {
                     x += dx;
                     y += dy;
-                } while (onBoard(x, y) && get(other, x, y));
+                } while (onBoard(x, y) && (get(x, y) == other));
 
-                if (onBoard(x, y) && get(side, x, y)) return true;
+                if (onBoard(x, y) && (get(x, y) == side)) return true;
             }
         }
     }
     return false;
+}
+
+/**
+ * Returns a Capture object specifying whether the move
+ * is valid & (if valid) the moves that are made due to the capture.
+ */
+Capture Board::checkMoveCapture(Move *m, Side side)
+{
+    Capture result;
+
+    // Passing is only legal if you have no moves.
+    if (m == nullptr) {
+        result.valid = !hasMoves(side);
+        return result;
+    }
+
+    int X = m->getX();
+    int Y = m->getY();
+
+    // Make sure the square hasn't already been taken.
+    if (occupied(X, Y)) return result;
+
+    Side other = (side == BLACK) ? WHITE : BLACK;
+    for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+            if (dy == 0 && dx == 0) continue;
+
+            // Is there a capture in that direction?
+            vector<Move> captures;
+            int x = X + dx;
+            int y = Y + dy;
+            if (onBoard(x, y) && (get(x, y) == other)) {
+                do {
+                    // Make new move.
+                    captures.push_back(Move(x, y));
+                    x += dx;
+                    y += dy;
+                } while (onBoard(x, y) && (get(x, y) == other));
+
+                if (onBoard(x, y) && (get(x, y) == side)) {
+                    // Add these moves to captures.
+                    for (unsigned int i = 0; i < captures.size(); i++)
+                    {
+                        result.captures.push_back(captures[i]);
+                    }
+                    result.valid = true;
+                }
+            }
+        }
+    }
+    return result;
 }
 
 /*
@@ -108,37 +182,25 @@ void Board::doMove(Move *m, Side side) {
     // A nullptr move means pass.
     if (m == nullptr) return;
 
-    // Ignore if move is invalid.
-    if (!checkMove(m, side)) return;
+    // Check the move is valid AND get moves required.
+    Capture check = checkMoveCapture(m, side);
 
     int X = m->getX();
     int Y = m->getY();
-    Side other = (side == BLACK) ? WHITE : BLACK;
-    for (int dx = -1; dx <= 1; dx++) {
-        for (int dy = -1; dy <= 1; dy++) {
-            if (dy == 0 && dx == 0) continue;
 
-            int x = X;
-            int y = Y;
-            do {
-                x += dx;
-                y += dy;
-            } while (onBoard(x, y) && get(other, x, y));
-
-            if (onBoard(x, y) && get(side, x, y)) {
-                x = X;
-                y = Y;
-                x += dx;
-                y += dy;
-                while (onBoard(x, y) && get(other, x, y)) {
-                    set(side, x, y);
-                    x += dx;
-                    y += dy;
-                }
-            }
+    if (check.valid)
+    {
+        // First, make moves in check.
+        for (unsigned int i = 0; i < check.captures.size(); i++)
+        {
+            int x = check.captures[i].getX();
+            int y = check.captures[i].getY();
+            set(side, x, y);
         }
+
+        // Finally, make the move.
+        set(side, X, Y);
     }
-    set(side, X, Y);
 }
 
 /*
@@ -152,29 +214,60 @@ int Board::count(Side side) {
  * Current count of black stones.
  */
 int Board::countBlack() {
-    return black.count();
+    return counts[BLACK];
 }
 
 /*
  * Current count of white stones.
  */
 int Board::countWhite() {
-    return taken.count() - black.count();
+    return counts[WHITE];
+}
+
+/*
+ * Current count of emtpy spaces.
+ */
+int Board::countEmpty() {
+    return counts[EMPTY];
+}
+
+/*
+ * Prints current board to terminal.
+ */
+void Board::printBoard() {
+    cerr << "-------------------" << endl;
+    for (int y = 0; y < 8; y++) {
+        cerr << "| ";
+        for (int x = 0; x < 8; x++) {
+            cerr << get(x, y) << ' ';
+        }
+        cerr << "|" << endl;
+    }
+    cerr << "-------------------" << endl;
 }
 
 /*
  * Sets the board state given an 8x8 char array where 'w' indicates a white
  * piece and 'b' indicates a black piece. Mainly for testing purposes.
  */
-void Board::setBoard(char data[]) {
-    taken.reset();
-    black.reset();
-    for (int i = 0; i < 64; i++) {
-        if (data[i] == 'b') {
-            taken.set(i);
-            black.set(i);
-        } if (data[i] == 'w') {
-            taken.set(i);
+void Board::setBoard(char data[8][8]) {
+    // Clear counts.
+    counts[EMPTY] = 64;
+    counts[WHITE] = 0;
+    counts[BLACK] = 0;
+
+    for (int y = 0; y < 8; y++) {
+        for (int x = 0; x < 8; x++) {
+            if (data[y][x] == 'b') {
+                set(BLACK, x, y);
+            }
+            else if (data[y][x] == 'w') {
+                set(WHITE, x, y);
+            }
+            else
+            {
+                board[y][x] = EMPTY;
+            }
         }
     }
 }

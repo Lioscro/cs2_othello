@@ -1,17 +1,18 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
-enum Side { 
-    WHITE, BLACK
+enum Side {
+    // Note: EMPTY = 0, WHITE = 1, BLACK = 1
+    EMPTY, WHITE, BLACK
 };
 
 class Move {
-   
+
 public:
     int x, y;
     Move(int x, int y) {
         this->x = x;
-        this->y = y;        
+        this->y = y;
     }
     ~Move() {}
 
