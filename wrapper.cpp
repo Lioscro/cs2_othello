@@ -19,6 +19,38 @@ int main(int argc, char *argv[]) {
     cout << "Init done" << endl;
     cout.flush();
 
+    // These were used for testing
+    /*
+    player->board->printBoard();
+    cerr << player->board->countWhite() << " " << player->board->countBlack() << " " << player->board->countEmpty() << endl;
+    player->board->doMove(new Move(0, 0), side);
+    player->board->printBoard();
+    cerr << player->board->countWhite() << " " << player->board->countBlack() << " " << player->board->countEmpty() << endl;
+    player->board->doMove(new Move(3, 2), side);
+    player->board->printBoard();
+    cerr << player->board->countWhite() << " " << player->board->countBlack() << " " << player->board->countEmpty() << endl;
+
+    player->board->doMove(new Move(4, 2), side);
+    player->board->printBoard();
+    cerr << player->board->countWhite() << " " << player->board->countBlack() << " " << player->board->countEmpty() << endl;
+
+    player->board->doMove(new Move(2, 2), WHITE);
+    player->board->printBoard();
+    cerr << player->board->countWhite() << " " << player->board->countBlack() << " " << player->board->countEmpty() << endl;
+
+    player->board->doMove(new Move(2, 3), side);
+    player->board->printBoard();
+    cerr << player->board->countWhite() << " " << player->board->countBlack() << " " << player->board->countEmpty() << endl;
+
+    player->board->doMove(new Move(2, 4), WHITE);
+    player->board->printBoard();
+    cerr << player->board->countWhite() << " " << player->board->countBlack() << " " << player->board->countEmpty() << endl;
+
+    player->board->doMove(new Move(4, 2), WHITE);
+    player->board->printBoard();
+    cerr << player->board->countWhite() << " " << player->board->countBlack() << " " << player->board->countEmpty() << endl;
+    */
+
     int moveX, moveY, msLeft;
 
     // Get opponent's move and time left for player each turn.
