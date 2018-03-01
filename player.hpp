@@ -9,6 +9,8 @@ using namespace std;
 class Player {
 
 public:
+    Board *board;
+
     Player(Side side);
     ~Player();
 
