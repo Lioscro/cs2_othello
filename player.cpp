@@ -54,6 +54,47 @@ Move *Player::doMoveMinimax(vector<Move*> moves, int depth, int msLeft)
 }
 
 /**
+ * Calculates the minimum score if the given move is performed
+ * on the given board by the given side.
+ */
+int Player::calcMinScore(Board *copy, Move *move, Side side, int depth)
+{
+    // Do the move.
+    copy->doMove(move, side);
+    // copy->printBoard();
+
+    // Base case.
+    if (depth <= 0)
+    {
+        // Return the score.
+        int score = calcScore(copy);
+        delete copy;
+        return score;
+    }
+
+    // Otherwise, recursively call this function for every available move.
+    // First, get all vailable moves.
+    Side other = (side == BLACK) ? WHITE : BLACK;
+    vector<Move*> available = copy->getMoves(other);
+
+    int minscore = calcMinScore(copy->copy(), available[0], other, depth-1);
+    for (unsigned int i = 1; i < available.size(); i++)
+    {
+        int score = calcMinScore(copy->copy(), available[i], other, depth-1);
+        // cerr << score << endl;
+        if (score < minscore)
+        {
+            minscore = score;
+        }
+    }
+
+    // Free memory.
+    delete copy;
+
+    return minscore;
+}
+
+/**
  * Calculates the player's score on the given board by calculating
  * (# stones the player has) - (# stones the opponent has)
  */

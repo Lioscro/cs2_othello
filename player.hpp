@@ -8,9 +8,12 @@ using namespace std;
 
 class Player {
 
+private:
     Side side;
     Move *doMoveMinimax(vector<Move*> moves, int depth, int msLeft);
     int calcScore(Board *board);
+    int calcMinScore(Board *copy, Move *move, Side side, int depth);
+
 public:
     Board *board;
 
@@ -18,7 +21,6 @@ public:
     ~Player();
 
     Move *doMove(Move *opponentsMove, int msLeft);
-
     // Flag to tell if the player is running within the test_minimax context
     bool testingMinimax;
 };
