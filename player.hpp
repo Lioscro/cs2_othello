@@ -9,6 +9,7 @@ using namespace std;
 class Player {
 
     Side side;
+    int calcScore(Board *board);
 public:
     Board *board;
 

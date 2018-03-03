@@ -44,3 +44,14 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      */
     return nullptr;
 }
+/**
+ * Calculates the player's score on the given board by calculating
+ * (# stones the player has) - (# stones the opponent has)
+ */
+int Player::calcScore(Board *board)
+{
+    Side other = (side == BLACK) ? WHITE : BLACK;
+    return board->count(side) - board->count(other);
+}
+
+
