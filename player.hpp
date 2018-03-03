@@ -9,6 +9,7 @@ using namespace std;
 class Player {
 
     Side side;
+    Move *doMoveMinimax(vector<Move*> moves, int depth, int msLeft);
     int calcScore(Board *board);
 public:
     Board *board;

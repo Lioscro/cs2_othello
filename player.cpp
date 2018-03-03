@@ -44,6 +44,15 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      */
     return nullptr;
 }
+
+/**
+ * Computes next move using Minimax algorithm.
+ */
+Move *Player::doMoveMinimax(vector<Move*> moves, int depth, int msLeft)
+{
+    
+}
+
 /**
  * Calculates the player's score on the given board by calculating
  * (# stones the player has) - (# stones the opponent has)
