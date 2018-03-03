@@ -7,7 +7,7 @@ using namespace std;
 
 struct Capture {
     bool valid = false;
-    vector<Move> captures;
+    vector<Move*> captures;
 };
 
 class Board {
@@ -39,6 +39,7 @@ public:
     bool checkMove(Move *m, Side side);
     Capture checkMoveCapture(Move *m, Side side);
     void doMove(Move *m, Side side);
+    vector<Move*> getMoves(Side side);
     int count(Side side);
     int countBlack();
     int countWhite();

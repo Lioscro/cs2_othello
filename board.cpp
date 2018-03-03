@@ -150,13 +150,14 @@ Capture Board::checkMoveCapture(Move *m, Side side)
             if (dy == 0 && dx == 0) continue;
 
             // Is there a capture in that direction?
-            vector<Move> captures;
+            vector<Move*> captures;
             int x = X + dx;
             int y = Y + dy;
             if (onBoard(x, y) && (get(x, y) == other)) {
                 do {
                     // Make new move.
-                    captures.push_back(Move(x, y));
+                    Move *newMove = new Move(x, y);
+                    captures.push_back(newMove);
                     x += dx;
                     y += dy;
                 } while (onBoard(x, y) && (get(x, y) == other));
@@ -174,6 +175,34 @@ Capture Board::checkMoveCapture(Move *m, Side side)
     }
     return result;
 }
+
+/**
+ * Returns all available moves for the specified side.
+ */
+vector<Move*> Board::getMoves(Side side)
+{
+    // The results.
+    vector<Move*> results;
+
+    // Loop through every position and call checkMove.
+    for (int y = 0; y < 8; y++)
+    {
+        for (int x = 0; x < 8; x++)
+        {
+            // Make the new move.
+            Move *newMove = new Move(x, y);
+
+            // Check if the new move is valid for side.
+            if (checkMove(newMove, side))
+            {
+                results.push_back(newMove);
+            }
+        }
+    }
+
+    return results;
+}
+
 
 /*
  * Modifies the board to reflect the specified move.
@@ -193,9 +222,12 @@ void Board::doMove(Move *m, Side side) {
         // First, make moves in check.
         for (unsigned int i = 0; i < check.captures.size(); i++)
         {
-            int x = check.captures[i].getX();
-            int y = check.captures[i].getY();
+            int x = check.captures[i]->getX();
+            int y = check.captures[i]->getY();
             set(side, x, y);
+
+            // Free memory.
+            delete check.captures[i];
         }
 
         // Finally, make the move.
