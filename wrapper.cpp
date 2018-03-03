@@ -46,11 +46,42 @@ int main(int argc, char *argv[]) {
     player->board->printBoard();
     cerr << player->board->countWhite() << " " << player->board->countBlack() << " " << player->board->countEmpty() << endl;
 
+    vector<Move*> available = player->board->getMoves(side);
+    for (unsigned int i = 0; i < available.size(); i++)
+    {
+        cerr << available[i]->getX() << " " << available[i]->getY() << endl;
+    }
+
+
     player->board->doMove(new Move(4, 2), WHITE);
     player->board->printBoard();
     cerr << player->board->countWhite() << " " << player->board->countBlack() << " " << player->board->countEmpty() << endl;
     */
+    /*
+    char boardData[8][8] = {
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+        {' ', 'b', ' ', ' ', ' ', ' ', ' ', ' '},
+        {'b', 'w', 'b', 'b', 'b', 'b', ' ', ' '},
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}
+    };
+    Board *board = new Board();
+    board->setBoard(boardData);
+    board->printBoard();
+    cerr << board->count(BLACK) << " " << board->count(WHITE) << endl;
+    cerr << player->calcScore(board) << endl;
 
+
+    vector<Move*> available = board->getMoves(WHITE);
+    cerr << available.size() << endl;
+
+    cerr << player->calcMinScore(board->copy(), available[0], WHITE, 1) << endl;
+    cerr << player->calcMinScore(board->copy(), available[1], WHITE, 1) << endl;
+    */
+    
     int moveX, moveY, msLeft;
 
     // Get opponent's move and time left for player each turn.
