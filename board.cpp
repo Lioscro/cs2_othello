@@ -283,6 +283,7 @@ void Board::printBoard() {
  * piece and 'b' indicates a black piece. Mainly for testing purposes.
  */
 void Board::setBoard(char data[8][8]) {
+
     // Clear counts.
     counts[EMPTY] = 64;
     counts[WHITE] = 0;
@@ -290,15 +291,13 @@ void Board::setBoard(char data[8][8]) {
 
     for (int y = 0; y < 8; y++) {
         for (int x = 0; x < 8; x++) {
+            board[y][x] = EMPTY;
+
             if (data[y][x] == 'b') {
                 set(BLACK, x, y);
             }
             else if (data[y][x] == 'w') {
                 set(WHITE, x, y);
-            }
-            else
-            {
-                board[y][x] = EMPTY;
             }
         }
     }
