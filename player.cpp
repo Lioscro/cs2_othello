@@ -15,18 +15,6 @@ Player::Player(Side side) {
      
      // initialize board
      board = new Board();
-     
-     // initialize array containing heuristic scores for each spot on board
-     // NOTE: used random values here, should figure out optimal ones
-     int heuristic_values[8][8] = {
-		 {100, -50, 25, 25, 25, 25, -50, 100},
-		 {-50, -75,  0,  0,  0,  0, -75, -50},
-		 { 25,   0,  0,  0,  0,  0,   0,  25},
-		 { 15,   0,  0,  0,  0,  0,   0,  15},
-		 { 15,   0,  0,  0,  0,  0,   0,  15},
-		 { 25,   0,  0,  0,  0,  0,   0,  25},
-		 {-50, -75,  0,  0,  0,  0, -75, -50},
-		 {100, -50, 25, 25, 25, 25, -50, 100}};
 }
 
 /*
@@ -76,19 +64,19 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 		// is being used here to calculate min scores
 		int min = calcMinScore(board->copy(), available[0], side, depth, true);
 		
-		for (int i = 1; i < available.size(); i++) {
+		for (unsigned int i = 1; i < available.size(); i++) {
 			// NOTE: setting use_heuristic to true, so heuristic function
 			// is being used here to calculate min scores
-			int score = calcMinScore(board->copy(); available[i], side, depth, true);
+			int score = calcMinScore(board->copy(), available[i], side, depth, true);
 			
 			if (score < min) {
-				min = score
+				min = score;
 				bestMove = available[i];
 			}
 		}
 		
 		// delete all moves in possibleMoves except for the best one
-		for (int i = 0; i < available.size(); i++) {
+		for (unsigned int i = 0; i < available.size(); i++) {
 			if (available[i] != bestMove) {
 				delete available[i];
 			}
@@ -104,7 +92,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
  */
 Move *Player::doMoveMinimax(vector<Move*> moves, int depth, int msLeft)
 {
-    
+    return nullptr;
 }
 
 /**
@@ -156,7 +144,7 @@ int Player::calcMinScore(Board *copy, Move *move, Side side, int depth, bool use
 
     // Free memory.
     delete copy;
-    for (int i = 0; i < available.size(); i++) {
+    for (unsigned int i = 0; i < available.size(); i++) {
 		delete available[i];
 	}
 
@@ -180,6 +168,18 @@ int Player::calcScore(Board *board)
  */
 int Player::calcHeuristicScore(Board *board) 
 {
+     // initialize array containing heuristic scores for each spot on board
+     // NOTE: used random values here, should figure out optimal ones
+     int heuristic_values[8][8] = {
+		 {100, -50, 25, 25, 25, 25, -50, 100},
+		 {-50, -75,  0,  0,  0,  0, -75, -50},
+		 { 25,   0,  0,  0,  0,  0,   0,  25},
+		 { 15,   0,  0,  0,  0,  0,   0,  15},
+		 { 15,   0,  0,  0,  0,  0,   0,  15},
+		 { 25,   0,  0,  0,  0,  0,   0,  25},
+		 {-50, -75,  0,  0,  0,  0, -75, -50},
+		 {100, -50, 25, 25, 25, 25, -50, 100}};
+		 
 	int sum = 0;
 	
 	// go through each spot on the board and calculate its values
@@ -200,7 +200,7 @@ int Player::calcHeuristicScore(Board *board)
 				// otherwise, you lose the values outlined in the
 				// heuristic values array
 				else {
-					sum -= heuristic_values[i][j]
+					sum -= heuristic_values[i][j];
 				}
 			}
 		}
