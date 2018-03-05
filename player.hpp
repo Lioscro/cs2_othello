@@ -2,6 +2,7 @@
 #define __PLAYER_H__
 
 #include <iostream>
+#include <thread>
 #include "common.hpp"
 #include "board.hpp"
 using namespace std;
@@ -35,7 +36,7 @@ public:
 
     int calcScore(Board *board);
     int calcMinScore(Board *copy, Move *move, Side side, int depth, bool heuristic);
-    Move *doMove(Move *opponentsMove, int msLeft, int nthreads);
+    Move *doMove(Move *opponentsMove, int msLeft);
     // Flag to tell if the player is running within the test_minimax context
     bool testingMinimax;
 };
