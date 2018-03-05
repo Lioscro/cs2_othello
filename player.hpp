@@ -10,6 +10,7 @@ class Player {
 
 private:
     Side side;
+    Side opponentsSide;
     Move *doMoveMinimax(vector<Move*> moves, int depth, int msLeft, bool heuristic);
     int calcHeuristicScore(Board *board);
 
