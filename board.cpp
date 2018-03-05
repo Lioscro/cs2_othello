@@ -191,11 +191,16 @@ vector<Move*> Board::getMoves(Side side)
         {
             // Make the new move.
             Move *newMove = new Move(x, y);
+            // cerr << "checking move: " << newMove->getX() << " " << newMove->getY() <<endl;
 
             // Check if the new move is valid for side.
             if (checkMove(newMove, side))
             {
                 results.push_back(newMove);
+            }
+            else
+            {
+                delete newMove;
             }
         }
     }
