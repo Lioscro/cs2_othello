@@ -25,7 +25,6 @@ private:
     int counts[3];
 
     bool occupied(int x, int y);
-    int get(int x, int y);
     void set(Side side, int x, int y);
     bool onBoard(int x, int y);
 
@@ -33,6 +32,7 @@ public:
     Board();
     ~Board();
     Board *copy();
+    int get(int x, int y);
 
     bool isDone();
     bool hasMoves(Side side);
