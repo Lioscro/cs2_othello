@@ -11,6 +11,19 @@ class Player {
 private:
     Side side;
     Side opponentsSide;
+
+    // initialize array containing heuristic scores for each spot on board
+    // NOTE: used random values here, should figure out optimal ones
+    int heuristic_values[8][8] = {
+    {100, -50, 25, 25, 25, 25, -50, 100},
+    {-50, -75,  0,  0,  0,  0, -75, -50},
+    { 25,   0,  0,  0,  0,  0,   0,  25},
+    { 15,   0,  0,  0,  0,  0,   0,  15},
+    { 15,   0,  0,  0,  0,  0,   0,  15},
+    { 25,   0,  0,  0,  0,  0,   0,  25},
+    {-50, -75,  0,  0,  0,  0, -75, -50},
+    {100, -50, 25, 25, 25, 25, -50, 100}};
+
     Move *doMoveMinimax(vector<Move*> moves, int depth, int msLeft, bool heuristic);
     int calcHeuristicScore(Board *board);
 

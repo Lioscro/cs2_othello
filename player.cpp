@@ -9,24 +9,13 @@ Player::Player(Side side) {
     // Will be set to true in test_minimax.cpp.
     testingMinimax = false;
 
-     // define the color of your side and opponent's side
-     side = side;
-     opponentsSide = (side == BLACK) ? WHITE : BLACK;
-     
-     // initialize board
-     board = new Board();
-     
-     // initialize array containing heuristic scores for each spot on board
-     // NOTE: used random values here, should figure out optimal ones
-     int heuristic_values[8][8] = {
-		 {100, -50, 25, 25, 25, 25, -50, 100},
-		 {-50, -75,  0,  0,  0,  0, -75, -50},
-		 { 25,   0,  0,  0,  0,  0,   0,  25},
-		 { 15,   0,  0,  0,  0,  0,   0,  15},
-		 { 15,   0,  0,  0,  0,  0,   0,  15},
-		 { 25,   0,  0,  0,  0,  0,   0,  25},
-		 {-50, -75,  0,  0,  0,  0, -75, -50},
-		 {100, -50, 25, 25, 25, 25, -50, 100}};
+    // define the color of your side and opponent's side
+    this->side = side;
+    opponentsSide = (side == BLACK) ? WHITE : BLACK;
+
+    // initialize board
+    board = new Board();
+
 }
 
 /*
