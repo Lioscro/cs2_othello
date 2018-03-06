@@ -129,7 +129,7 @@ int Player::calcMinScore(Board *copy, Move *move, Side side, int depth, bool heu
     copy->doMove(move, side);
 
     // Base case.
-    if (depth <= 0 ||) {
+    if (depth <= 0) {
         int score;
 
         // if using heuristic function, use heuristic_calcScore
