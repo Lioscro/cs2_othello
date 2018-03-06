@@ -2,6 +2,7 @@
 #define __PLAYER_H__
 
 #include <iostream>
+#include <thread>
 #include "common.hpp"
 #include "board.hpp"
 using namespace std;
@@ -11,9 +12,26 @@ class Player {
 private:
     Side side;
     Side opponentsSide;
+<<<<<<< HEAD
     Move *doMoveMinimax(vector<Move*> moves, int depth, int msLeft);
     int calcScore(Board *board);
     int calcMinScore(Board *copy, Move *move, Side side, int depth, bool use_heuristic);
+=======
+
+    // initialize array containing heuristic scores for each spot on board
+    // NOTE: used random values here, should figure out optimal ones
+    int heuristic_values[8][8] = {
+    {100, -50, 25, 25, 25, 25, -50, 100},
+    {-50, -75,  0,  0,  0,  0, -75, -50},
+    { 25,   0,  0,  0,  0,  0,   0,  25},
+    { 15,   0,  0,  0,  0,  0,   0,  15},
+    { 15,   0,  0,  0,  0,  0,   0,  15},
+    { 25,   0,  0,  0,  0,  0,   0,  25},
+    {-50, -75,  0,  0,  0,  0, -75, -50},
+    {100, -50, 25, 25, 25, 25, -50, 100}};
+
+    Move *doMoveMinimax(vector<Move*> moves, int depth, int msLeft, bool heuristic);
+>>>>>>> f2c0ca8ce1625f2da7a26c9fb28b8bcbb5c04ec7
     int calcHeuristicScore(Board *board);
 
 public:
@@ -22,6 +40,8 @@ public:
     Player(Side side);
     ~Player();
 
+    int calcScore(Board *board);
+    int calcMinScore(Board *copy, Move *move, Side side, int depth, bool heuristic);
     Move *doMove(Move *opponentsMove, int msLeft);
     // Flag to tell if the player is running within the test_minimax context
     bool testingMinimax;
