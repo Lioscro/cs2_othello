@@ -5,33 +5,22 @@
  * on (BLACK or WHITE) is passed in as "side". The constructor must finish
  * within 30 seconds.
  */
-Player::Player(Side side) {
+Player::Player(Side s) {
     // Will be set to true in test_minimax.cpp.
     testingMinimax = false;
 
-<<<<<<< HEAD
-     // define the color of your side and opponent's side
-     side = side;
-     opponentsSide = (side == BLACK) ? WHITE : BLACK;
-     
-     // initialize board
-     board = new Board();
-=======
     // define the color of your side and opponent's side
-    this->side = side;
+    side = s;
     opponentsSide = (side == BLACK) ? WHITE : BLACK;
 
     // initialize board
     board = new Board();
-
->>>>>>> f2c0ca8ce1625f2da7a26c9fb28b8bcbb5c04ec7
 }
 
 /*
  * Destructor for the player.
  */
 Player::~Player() {
-    delete board;
 }
 
 /*
@@ -48,15 +37,14 @@ Player::~Player() {
  * return nullptr.
  */
 Move *Player::doMove(Move *opponentsMove, int msLeft) {
-<<<<<<< HEAD
-	
 	// modify the board so it includes opponent's move
 	board->doMove(opponentsMove, opponentsSide);
 	
 	// set depth to 2 if minimax, otherwise set depth to...? used 4 here
 	int depth;
 	if (testingMinimax) {
-		depth = 2;
+		depth = 1;
+		// depth = 2;
 	}
 	else {
 		depth = 4;
@@ -68,21 +56,21 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 		return nullptr;
 	}
 	
-	// otherwise, calculate the score of each valid move and choose the
+	// otherwise, calculate the score of each valid move and choose the opponent
 	// move with the minimum score
 	else {
 		Move* bestMove = available[0];
 		// NOTE: setting use_heuristic to true, so heuristic function
 		// is being used here to calculate min scores
-		int min = calcMinScore(board->copy(), available[0], side, depth, true);
+		int minmax = calcMinScore(board->copy(), available[0], side, depth, false, true );
 		
 		for (unsigned int i = 1; i < available.size(); i++) {
 			// NOTE: setting use_heuristic to true, so heuristic function
 			// is being used here to calculate min scores
-			int score = calcMinScore(board->copy(), available[i], side, depth, true);
+			int score = calcMinScore(board->copy(), available[i], side, depth, false, true);
 			
-			if (score < min) {
-				min = score;
+			if (score > minmax) { // calculate max score for the current player
+				minmax = score;
 				bestMove = available[i];
 			}
 		}
@@ -97,25 +85,6 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 		// return move with minimum score
 		return bestMove;
 	}
-=======
-  	// modify the board so it includes opponent's move
-  	board->doMove(opponentsMove, opponentsSide);
-
-  	// get all valid moves - if there are none, just return nullptr
-  	vector<Move*> available = board->getMoves(side);
-  	if (available.size() == 0) {
-  		  return nullptr;
-  	}
-
-    // whether or not we are using minimax
-    int depth = testingMinimax ? 2 : 4;
-    bool heuristic = true;
-    Move *nextMove = doMoveMinimax(available, depth, msLeft, heuristic);
-
-    // Before returning, perform the move.
-    board->doMove(nextMove, side);
-    return nextMove;
->>>>>>> f2c0ca8ce1625f2da7a26c9fb28b8bcbb5c04ec7
 }
 
 /**
@@ -124,18 +93,15 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
  */
 Move *Player::doMoveMinimax(vector<Move*> available, int depth, int msLeft, bool heuristic)
 {
-<<<<<<< HEAD
-    return nullptr;
-=======
     Move* bestMove = available[0];
     // NOTE: setting use_heuristic to true, so heuristic function
     // is being used here to calculate min scores
-    int minimax = calcMinScore(board->copy(), available[0], side, depth-1, heuristic);
+    int minimax = calcMinScore(board->copy(), available[0], side, depth-1, heuristic, true);
 
     for (unsigned int i = 1; i < available.size(); i++) {
         // NOTE: setting use_heuristic to true, so heuristic function
         // is being used here to calculate min scores
-        int score = calcMinScore(board->copy(), available[i], side, depth-1, heuristic);
+        int score = calcMinScore(board->copy(), available[i], side, depth-1, heuristic, true);
 
         if (score > minimax) {
             minimax = score;
@@ -151,7 +117,6 @@ Move *Player::doMoveMinimax(vector<Move*> available, int depth, int msLeft, bool
         }
     }
     return bestMove;
->>>>>>> f2c0ca8ce1625f2da7a26c9fb28b8bcbb5c04ec7
 }
 
 /**
@@ -160,7 +125,7 @@ Move *Player::doMoveMinimax(vector<Move*> available, int depth, int msLeft, bool
  */
 // NOTE: changed arguments to also include boolean use_heuristic (set to
 // true if using heuristc function
-int Player::calcMinScore(Board *copy, Move *move, Side side, int depth, bool heuristic)
+int Player::calcMinScore(Board *copy, Move *move, Side side, int depth, bool heuristic, bool getMin)
 {
     // Do the move.
     copy->doMove(move, side);
@@ -183,34 +148,31 @@ int Player::calcMinScore(Board *copy, Move *move, Side side, int depth, bool heu
 
         // free memory and return score
         delete copy;
-        for (unsigned int i = 0; i < available.size(); i++) {
-    		    delete available[i];
-    	  }
         return score;
     }
 
     // Otherwise, recursively call this function for every available move.
     // First, get all vailable moves.
-    int minscore = calcMinScore(copy->copy(), available[0], other, depth-1, heuristic);
-    for (unsigned int i = 1; i < available.size(); i++) {
-        int score = calcMinScore(copy->copy(), available[i], other, depth-1, heuristic);
-        if (score < minscore) {
-            minscore = score;
-        }
-    }
+    else {
+		int minmaxscore = calcMinScore(copy->copy(), available[0], other, depth-1, heuristic, !getMin);
+		for (unsigned int i = 1; i < available.size(); i++) {
+			int score = calcMinScore(copy->copy(), available[i], other, depth-1, heuristic, !getMin);
+			if (getMin && (score < minmaxscore)) {
+				minmaxscore = score;
+			}
+			else if (!getMin && (score > minmaxscore)){
+				minmaxscore = score;
+			}
+		}
 
-    // Free memory.
-    delete copy;
-    for (unsigned int i = 0; i < available.size(); i++) {
-<<<<<<< HEAD
-		delete available[i];
-	}
-=======
-		    delete available[i];
-	  }
->>>>>>> f2c0ca8ce1625f2da7a26c9fb28b8bcbb5c04ec7
-
-    return minscore;
+		// Free memory.
+		delete copy;
+		for (unsigned int i = 0; i < available.size(); i++) {
+			delete available[i];
+		}
+	  
+	  return minmaxscore;
+  }
 }
 
 /**
@@ -229,47 +191,6 @@ int Player::calcScore(Board *board)
  */
 int Player::calcHeuristicScore(Board *board)
 {
-<<<<<<< HEAD
-     // initialize array containing heuristic scores for each spot on board
-     // NOTE: used random values here, should figure out optimal ones
-     int heuristic_values[8][8] = {
-		 {100, -50, 25, 25, 25, 25, -50, 100},
-		 {-50, -75,  0,  0,  0,  0, -75, -50},
-		 { 25,   0,  0,  0,  0,  0,   0,  25},
-		 { 15,   0,  0,  0,  0,  0,   0,  15},
-		 { 15,   0,  0,  0,  0,  0,   0,  15},
-		 { 25,   0,  0,  0,  0,  0,   0,  25},
-		 {-50, -75,  0,  0,  0,  0, -75, -50},
-		 {100, -50, 25, 25, 25, 25, -50, 100}};
-		 
-	int sum = 0;
-	
-	// go through each spot on the board and calculate its values
-	// based on the heuristic values assigned in the Player constructor
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 8; j++) {
-			
-			// first check if spot is occupied and if so, which side
-			// is occupying it
-			if (board->occupied(i, j)) {
-				
-				// if your own side, then you gain the values outlined
-				// in the heuristic_values array
-				if (board->get(i, j) == side) {
-					sum += heuristic_values[i][j];
-				}
-				
-				// otherwise, you lose the values outlined in the
-				// heuristic values array
-				else {
-					sum -= heuristic_values[i][j];
-				}
-			}
-		}
-	}
-	
-	return sum;
-=======
   	int sum = 0;
 
   	// go through each spot on the board and calculate its values
@@ -291,7 +212,6 @@ int Player::calcHeuristicScore(Board *board)
   	}
 
   	return sum;
->>>>>>> f2c0ca8ce1625f2da7a26c9fb28b8bcbb5c04ec7
 }
 
 

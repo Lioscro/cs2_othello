@@ -24,10 +24,7 @@ private:
     // # of black spaces = counts[BLACK]
     int counts[3];
 
-<<<<<<< HEAD
-=======
     bool occupied(int x, int y);
->>>>>>> f2c0ca8ce1625f2da7a26c9fb28b8bcbb5c04ec7
     void set(Side side, int x, int y);
     bool onBoard(int x, int y);
 
@@ -35,9 +32,6 @@ public:
     Board();
     ~Board();
     Board *copy();
-    int get(int x, int y);
-
-	bool occupied(int x, int y);
     int get(int x, int y);
     
     bool isDone();
