@@ -37,52 +37,24 @@ Player::~Player() {
  * return nullptr.
  */
 Move *Player::doMove(Move *opponentsMove, int msLeft) {
-	// modify the board so it includes opponent's move
-	board->doMove(opponentsMove, opponentsSide);
-	
-	// set depth to 2 if minimax, otherwise set depth to 4 here
-	int depth;
-	if (testingMinimax) {
-		depth = 2;
-	}
-	else {
-		depth = 4;
-	}
-	
-	// get all valid moves - if there are none, just return nullptr
-	vector<Move*> available = board->getMoves(side);
-	if (available.size() == 0) {
-		return nullptr;
-	}
-	
-	// otherwise, calculate the score of each valid move and choose the opponent
-	// move with the minimum score
-	else {
-		Move* bestMove = available[0];
-		// NOTE: setting use_heuristic to true, so heuristic function
-		// is being used here to calculate min scores
-		int minmax = calcMinScore(board->copy(), available[0], side, depth, true, true );
-		for (unsigned int i = 1; i < available.size(); i++) {
-			// NOTE: setting use_heuristic to true, so heuristic function
-			// is being used here to calculate min scores
-			int score = calcMinScore(board->copy(), available[i], side, depth, true, true);
-			
-			if (score > minmax) { // calculate max score for the current player
-				minmax = score;
-				bestMove = available[i];
-			}
-		}
-		
-		// delete all moves in possibleMoves except for the best one
-		for (unsigned int i = 0; i < available.size(); i++) {
-			if (available[i] != bestMove) {
-				delete available[i];
-			}
-		}
-		
-		// return move with minimum score
-		return bestMove;
-	}
+  	// modify the board so it includes opponent's move
+  	board->doMove(opponentsMove, opponentsSide);
+
+  	// get all valid moves - if there are none, just return nullptr
+  	vector<Move*> available = board->getMoves(side);
+  	if (available.size() == 0) {
+  		return nullptr;
+  	}
+
+    // whether or not we are using minimax
+    int depth = testingMinimax ? 2 : 4;
+    bool heuristic = true;
+    Move *nextMove = doMoveMinimax(available, depth, msLeft, heuristic);
+
+    // Before returning, perform the move.
+    board->doMove(nextMove, side);
+    return nextMove;
+
 }
 
 /**
@@ -168,7 +140,7 @@ int Player::calcMinScore(Board *copy, Move *move, Side side, int depth, bool heu
 		for (unsigned int i = 0; i < available.size(); i++) {
 			delete available[i];
 		}
-	  
+
 	  return minmaxscore;
   }
 }
