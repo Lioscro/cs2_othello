@@ -128,11 +128,8 @@ int Player::calcMinScore(Board *copy, Move *move, Side side, int depth, bool heu
     // Do the move.
     copy->doMove(move, side);
 
-    Side other = (side == BLACK) ? WHITE : BLACK;
-    vector<Move*> available = copy->getMoves(other);
-
     // Base case.
-    if (depth <= 0 || available.size() == 0) {
+    if (depth <= 0 ||) {
         int score;
 
         // if using heuristic function, use heuristic_calcScore
@@ -151,6 +148,24 @@ int Player::calcMinScore(Board *copy, Move *move, Side side, int depth, bool heu
 
     // Otherwise, recursively call this function for every available move.
     // First, get all vailable moves.
+    Side other = (side == BLACK) ? WHITE : BLACK;
+    vector<Move*> available = copy->getMoves(other);
+    if (available.size() == 0) {
+		int score;
+
+        // if using heuristic function, use heuristic_calcScore
+        // otherwise, just do normal calcScore
+        if (heuristic) {
+			      score = calcHeuristicScore(copy);
+		    }
+        else {
+            score = calcScore(copy);
+        }
+
+        // free memory and return score
+        delete copy;
+        return score;
+    }
     else {
 		int minmaxscore = calcMinScore(copy->copy(), available[0], other, depth-1, heuristic, !getMin);
 		for (unsigned int i = 1; i < available.size(); i++) {
