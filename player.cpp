@@ -40,11 +40,10 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 	// modify the board so it includes opponent's move
 	board->doMove(opponentsMove, opponentsSide);
 	
-	// set depth to 2 if minimax, otherwise set depth to...? used 4 here
+	// set depth to 2 if minimax, otherwise set depth to 4 here
 	int depth;
 	if (testingMinimax) {
-		depth = 1;
-		// depth = 2;
+		depth = 2;
 	}
 	else {
 		depth = 4;
@@ -62,12 +61,11 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 		Move* bestMove = available[0];
 		// NOTE: setting use_heuristic to true, so heuristic function
 		// is being used here to calculate min scores
-		int minmax = calcMinScore(board->copy(), available[0], side, depth, false, true );
-		
+		int minmax = calcMinScore(board->copy(), available[0], side, depth, true, true );
 		for (unsigned int i = 1; i < available.size(); i++) {
 			// NOTE: setting use_heuristic to true, so heuristic function
 			// is being used here to calculate min scores
-			int score = calcMinScore(board->copy(), available[i], side, depth, false, true);
+			int score = calcMinScore(board->copy(), available[i], side, depth, true, true);
 			
 			if (score > minmax) { // calculate max score for the current player
 				minmax = score;
